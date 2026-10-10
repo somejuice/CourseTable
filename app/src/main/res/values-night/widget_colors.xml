@@ -1,0 +1,8 @@
+<resources>
+    <color name="widget_bg">#1B1B20</color>
+    <color name="widget_on_bg">#E4E1E6</color>
+    <color name="widget_muted">#A9ABBA</color>
+    <color name="widget_accent">#B9C3FF</color>
+    <color name="widget_on_accent">#07277F</color>
+    <color name="widget_cell">#2E3250</color>
+</resources>
