@@ -1,0 +1,10 @@
+{
+  "id": "qz-jsxsd",
+  "name": "强智教务（jsxsd）",
+  "vendor": "强智 qzdatasoft",
+  "version": 1,
+  "author": "CourseTable 内置",
+  "match": ["/jsxsd/", "xskb_list", "xskb/"],
+  "hint": "登录后进入「课表查询 → 学期理论课表」(jsxsd/xskb/xskb_list.do)，选择学期后点击抓取。",
+  "script": "const table = document.querySelector('#kbtable') || document.querySelector('table.Nsb_r_list') || document.querySelector('table'); if (!table) throw '未找到课表表格，请先打开“学期理论课表”页面'; const rows = Array.from(table.querySelectorAll('tr')); const out = []; for (const tr of rows) { const th = tr.querySelector('th, td.td1'); if (!th) continue; const nums = (th.innerText || '').match(/\\d+/g); if (!nums) continue; let sp, ep; const pm = (th.innerText||'').match(/^\\s*(\\d{2})(\\d{2})/); if (pm) { sp = parseInt(pm[1]); ep = parseInt(pm[2]); } else { sp = parseInt(nums[0]); ep = parseInt(nums[nums.length-1]); } const tds = Array.from(tr.querySelectorAll('td')).filter(function(td){ return td !== th; }); tds.forEach(function(td, i){ const day = i + 1; if (day > 7) return; const divs = Array.from(td.querySelectorAll('div.kbcontent')); const blocks = divs.length ? divs : [td]; for (const b of blocks) { if (!(b.innerText || '').trim()) continue; const segs = b.innerHTML.split(/-{4,}|<br\\s*\\/?>\\s*<br\\s*\\/?>/i); for (const seg of segs) { const tmp = document.createElement('div'); tmp.innerHTML = seg; const txt = (tmp.innerText || '').trim(); if (!txt) continue; const name = txt.split('\\n')[0].trim(); const f = function(t){ const el = tmp.querySelector('font[title=\"' + t + '\"]'); return el ? el.innerText.trim() : ''; }; const teacher = f('老师') || f('教师'); const wk = f('周次(节次)') || f('周次') || ((txt.match(/[\\d,\\-，、]+\\s*\\(?周\\)?[^\\n]*/)||[''])[0]); const room = f('教室') || f('上课地点'); const jm = wk.match(/\\[(\\d+)-(\\d+)节?\\]/) || wk.match(/\\[(\\d+)节?\\]/); out.push({ name: name, teacher: teacher, location: room, day: day, startPeriod: jm ? parseInt(jm[1]) : sp, endPeriod: jm ? parseInt(jm[2] || jm[1]) : ep, weekText: wk.replace(/\\[.*?\\]/g, '') }); } } }); } if (!out.length) throw '表格中没有解析到课程，请确认已选择正确学期'; return { courses: out };"
+}
