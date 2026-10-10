@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">大学课表</string>
+    <string name="widget_today_desc">今日课程：显示今天的课程列表</string>
+    <string name="widget_week_desc">本周课程：按星期展示本周课程</string>
+</resources>
